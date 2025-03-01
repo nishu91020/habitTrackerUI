@@ -1,7 +1,15 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  webpack: (config: any, { isServer }: { isServer: boolean }) => {
+    if (!isServer) {
+      // Ignore 'tls' module in the browser environment
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        tls: false,
+      };
+    }
+    return config;
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
