@@ -10,8 +10,9 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.0.9",
+    "google-fonts": "^1.0.0",
     "net": "^1.0.2",
-    "next": "^15.2.1-canary.4",
+    "next": "^15.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tls": "^0.0.1",

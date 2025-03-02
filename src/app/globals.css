@@ -17,3 +17,8 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+.madimi-one-regular {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-weight: 800;
+  font-style: italic;
+}
