@@ -1,6 +1,19 @@
 import Link from 'next/link';
 import '../src/app/globals.css';
+import {login} from "../service/apiService";
+import { useState } from 'react';
+
+const handleSubmit = async (event: React.FormEvent, username: string, password: string) => {
+  event.preventDefault();
+  try {
+    await login( username, password );
+  } catch (error) {
+    console.error('Signup failed:', error);
+  }
+};
 export default function Login() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
@@ -14,6 +27,7 @@ export default function Login() {
               type="text"
               id="username"
               placeholder="Username"
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
             />
           </div>
@@ -25,12 +39,14 @@ export default function Login() {
               type="password"
               id="password"
               placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
             />
           </div>
           <button
             type="submit"
             className="w-full px-4 py-2 font-bold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
+            onClick={(event) => handleSubmit(event, username,password)}
           >
             Login
           </button>

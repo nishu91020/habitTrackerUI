@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import '../src/app/globals.css';
+import { signup } from '../service/apiService';
 export default function Signup() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -31,6 +32,7 @@ export default function Signup() {
           <button
             type="submit"
             className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-500"
+            onSubmit={() => signup()}
           >
             Signup
           </button>
