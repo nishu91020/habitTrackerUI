@@ -1,39 +1,54 @@
 import { TaskModal } from '@/app/components/task';
 import '../src/app/globals.css';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
+import { getTasks } from '../service/apiService';
 
 interface Task {
   id: number;
   title: string;
   description: string;
   dueDate: string;
-  status: 'Pending' | 'Completed';
+  isCompleted: boolean;
 }
 
-const initialTasks: Task[] = [
-  {
-    id: 1,
-    title: 'Task 1',
-    description: 'Description for Task 1',
-    dueDate: '2025-03-01',
-    status: 'Pending',
-  },
-  {
-    id: 2,
-    title: 'Task 2',
-    description: 'Description for Task 2',
-    dueDate: '2025-03-02',
-    status: 'Pending',
-  },
-];
+// const initialTasks: Task[] = [
+//   {
+//     id: 1,
+//     title: 'Task 1',
+//     description: 'Description for Task 1',
+//     dueDate: '2025-03-01',
+//     status: 'Pending',
+//   },
+//   {
+//     id: 2,
+//     title: 'Task 2',
+//     description: 'Description for Task 2',
+//     dueDate: '2025-03-02',
+//     status: 'Pending',
+//   },
+// ];
 
 
 export default function Dashboard() {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
   const context = useAuth();
+
+  const getUserTasks = async () => {
+    try{
+      console.log('Token:', context.token);
+      const res = await getTasks(context.token);
+      setTasks(res?.data);
+    }
+    catch(error){
+      console.error('Error fetching tasks:', error);
+    }
+  }
+  useEffect(() => {
+    getUserTasks();
+  })
   
   const markAsCompleted = (taskId: number) => {
     setTasks(tasks.map(task => 
@@ -64,7 +79,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Dashboard  {context.user}</h1>
+        <h1 className="text-3xl font-bold">{context.user}'s Dashboard  </h1>
         <button
           onClick={() => handleOpenModal(null)}
           className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-500"
@@ -79,12 +94,12 @@ export default function Dashboard() {
               <div className="flex-1">
                 <h2 className="text-xl font-bold">{task.title}</h2>
                 <p className="text-gray-700">{task.description}</p>
-                <p className="text-gray-500">Due Date: {task.dueDate}</p>
-                <p className={`text-sm ${task.status === 'Completed' ? 'text-green-500' : 'text-red-500'}`}>
-                  Status: {task.status}
+                <p className="text-gray-500">Due Date: {task.dueDate.split('T')[0]}</p>
+                <p className={`text-sm ${task.isCompleted === true ? 'text-green-500' : 'text-red-500'}`}>
+                  Status: {task.isCompleted ? 'Completed' : 'Pending'}
                 </p>
               </div>
-              {task.status === 'Pending' && (
+              {!task.isCompleted && (
                 <button
                   onClick={() => markAsCompleted(task.id)}
                   className="mt-2 lg:mt-0 lg:ml-4 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-500"

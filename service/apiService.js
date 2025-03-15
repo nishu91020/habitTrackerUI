@@ -7,9 +7,13 @@ const axiosInstance = axios.create({
     maxRedirects: 3 
 });
 
-export const getTasks = async () => {
+export const getTasks = async (token) => {
     try {
-        const res = axios.get(baseUrl + "/api/tasks");
+        const res = axios.get(baseUrl + "/api/tasks", {
+            headers: {
+                token
+            }
+        });
         return res;
     } catch (err) {
         console.log('error fetching tasks for user', err);
@@ -49,9 +53,13 @@ export const login = async (username, password, loginContext) => {
     }
 }
 
-export const signup = async (user) => {
+export const signup = async (username, password) => {
+    const user = {
+        username: username,
+        password: password
+    }
     try {
-        const res = axios.post(baseUrl + "auth/signup", user);
+        const res = axios.post(baseUrl + "/auth/signup", user);
         return res;
     } catch (err) {
         console.log('error signing up', err);

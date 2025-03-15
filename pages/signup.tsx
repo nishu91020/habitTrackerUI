@@ -1,7 +1,25 @@
 import Link from 'next/link';
 import '../src/app/globals.css';
 import { signup } from '../service/apiService';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 export default function Signup() {
+  const router = useRouter();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSignup = async(e: React.FormEvent, username: string, password: string)=>{
+    e.preventDefault();
+    try{
+      const res = await signup(username, password);
+      console.log(res);
+      if(res?.status === 201){
+        router.push('/login');
+      }
+    }catch(error){
+      console.error('Signup failed:', error);
+    }
+  }
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
@@ -15,6 +33,7 @@ export default function Signup() {
               type="text"
               id="username"
               placeholder="Username"
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-500"
             />
           </div>
@@ -26,13 +45,14 @@ export default function Signup() {
               type="password"
               id="password"
               placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-500"
             />
           </div>
           <button
             type="submit"
             className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-500"
-            onSubmit={() => signup()}
+            onClick={(e) => handleSignup(e, username, password)}
           >
             Signup
           </button>
