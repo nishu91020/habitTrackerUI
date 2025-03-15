@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import '../src/app/globals.css';
+import { AuthProvider } from './AuthContext';
 
 function MyApp({ Component, pageProps }: { Component: any; pageProps: any }) {
   useEffect(() => {
@@ -15,7 +16,9 @@ function MyApp({ Component, pageProps }: { Component: any; pageProps: any }) {
     }
   }, []);
 
-  return <Component {...pageProps} />;
+  return (<AuthProvider>
+    <Component {...pageProps} />
+  </AuthProvider>);
 }
 
 export default MyApp;

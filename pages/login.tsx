@@ -2,18 +2,28 @@ import Link from 'next/link';
 import '../src/app/globals.css';
 import {login} from "../service/apiService";
 import { useState } from 'react';
+import { useAuth } from './AuthContext';
+import { useRouter } from 'next/router';
 
-const handleSubmit = async (event: React.FormEvent, username: string, password: string) => {
-  event.preventDefault();
-  try {
-    await login( username, password );
-  } catch (error) {
-    console.error('Signup failed:', error);
-  }
-};
+
 export default function Login() {
+  const loginContext = useAuth().login;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  const handleSubmit = async (event: React.FormEvent, username: string, password: string, loginContext: any) => {
+    event.preventDefault();
+    try {
+      const res = await login( username, password, loginContext);
+      if (res?.status === 302) {  
+        loginContext(res.data);
+        router.push('/dashboard');
+    }
+    } catch (error) {
+      console.error('Signup failed:', error);
+    }
+  };
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
@@ -46,7 +56,7 @@ export default function Login() {
           <button
             type="submit"
             className="w-full px-4 py-2 font-bold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
-            onClick={(event) => handleSubmit(event, username,password)}
+            onClick={(event) => handleSubmit(event, username,password, loginContext)}
           >
             Login
           </button>

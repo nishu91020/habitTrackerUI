@@ -6,6 +6,7 @@ interface Task {
   title: string;
   description: string;
   dueDate: string;
+  status: 'Pending' | 'Completed'
 }
 
 interface TaskModalProps {
@@ -25,6 +26,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, onClose, onSave }) =
       title,
       description,
       dueDate,
+      status: 'Pending'
     };
     onSave(newTask);
     onClose();
