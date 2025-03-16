@@ -7,7 +7,7 @@ interface Task {
   name: string;
   description: string;
   dueDate: string;
-  isCompleted: boolean;
+  completed: boolean;
 }
 
 interface TaskModalProps {
@@ -27,7 +27,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, onClose, onSave }) =
       name,
       description,
       dueDate,
-      isCompleted: false
+      completed: false
     };
     onSave(newTask);
     onClose();

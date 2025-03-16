@@ -29,7 +29,7 @@ export const addTask = async (task, token, user) => {
       description: task.description,
       createdAt: moment().format("YYYY-MM-DDTHH:mm:ss"),
       dueDate: moment(task.dueDate).format("YYYY-MM-DDTHH:mm:ss"),
-      isCompleted: false,
+      completed: false,
       username: user,
     };
     const res = axios.post(baseUrl + "/api/tasks", taskToSave, {
@@ -57,7 +57,11 @@ export const deleteTask = async (taskId, token) => {
 
 export const updateUserTask = async (task, token) => {
   try {
-    const res = axios.put(baseUrl + `/api/tasks/${task.id}`, task);
+    const res = axios.put(baseUrl + `/api/tasks/${task.id}`, task, {
+      headers: {
+        token,
+      },
+    });
     return res;
   } catch (err) {
     console.log("error updating task", err);
