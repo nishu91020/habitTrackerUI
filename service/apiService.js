@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment';
 
 const baseUrl = "http://localhost:8080";
 
@@ -20,9 +21,22 @@ export const getTasks = async (token) => {
     }
 }
 
-export const addTask = async (task) => {
+export const addTask = async (task, token, user) => {
     try {
-        const res = axios.post(baseUrl + "/api/tasks", task);
+        const taskToSave = {
+            id: task.id,
+            name: task.name,
+            description: task.description,
+            createdAt: moment().format('YYYY-MM-DDTHH:mm:ss'),
+            dueDate: moment(task.dueDate).format('YYYY-MM-DDTHH:mm:ss'),
+            isCompleted: false,
+            username: user
+        }
+        const res = axios.post(baseUrl + "/api/tasks", taskToSave,{
+            headers: {
+                token
+            }
+        });
         return res;
     } catch (err) {
         console.log('error adding task', err);

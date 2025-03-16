@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import '../globals.css'
+import {v4 as uuidv4} from 'uuid';
 
 interface Task {
-  id: number;
-  title: string;
+  id: string;
+  name: string;
   description: string;
   dueDate: string;
   isCompleted: boolean;
@@ -16,17 +17,17 @@ interface TaskModalProps {
 }
 
 export const TaskModal: React.FC<TaskModalProps> = ({ task, onClose, onSave }) => {
-  const [title, setTitle] = useState(task?.title || '');
+  const [name, setName] = useState(task?.name || '');
   const [description, setDescription] = useState(task?.description || '');
   const [dueDate, setDueDate] = useState(task?.dueDate || '');
 
   const handleSave = () => {
     const newTask: Task = {
-      id: task?.id || Date.now(),
-      title,
+      id: task?.id || uuidv4(),
+      name,
       description,
       dueDate,
-      status: 'Pending'
+      isCompleted: false
     };
     onSave(newTask);
     onClose();
@@ -44,8 +45,8 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, onClose, onSave }) =
             <input
               type="text"
               id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-500"
             />
           </div>

@@ -2,33 +2,15 @@ import { TaskModal } from '@/app/components/task';
 import '../src/app/globals.css';
 import { useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
-import { getTasks } from '../service/apiService';
+import { addTask, getTasks } from '../service/apiService';
 
 interface Task {
-  id: number;
-  title: string;
+  id: string;
+  name: string;
   description: string;
   dueDate: string;
   isCompleted: boolean;
 }
-
-// const initialTasks: Task[] = [
-//   {
-//     id: 1,
-//     title: 'Task 1',
-//     description: 'Description for Task 1',
-//     dueDate: '2025-03-01',
-//     status: 'Pending',
-//   },
-//   {
-//     id: 2,
-//     title: 'Task 2',
-//     description: 'Description for Task 2',
-//     dueDate: '2025-03-02',
-//     status: 'Pending',
-//   },
-// ];
-
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -40,6 +22,7 @@ export default function Dashboard() {
     try{
       console.log('Token:', context.token);
       const res = await getTasks(context.token);
+      console.log('Tasks:', res?.data);
       setTasks(res?.data);
     }
     catch(error){
@@ -48,9 +31,9 @@ export default function Dashboard() {
   }
   useEffect(() => {
     getUserTasks();
-  })
+  },[]);
   
-  const markAsCompleted = (taskId: number) => {
+  const markAsCompleted = (taskId: string) => {
     setTasks(tasks.map(task => 
       task.id === taskId ? { ...task, status: 'Completed' } : task
     ));
@@ -66,13 +49,12 @@ export default function Dashboard() {
     setCurrentTask(null);
   };
 
-  const handleSaveTask = (task: Task) => {
-    if (currentTask) {
-      // Edit existing task
-      setTasks(tasks.map(t => (t.id === task.id ? task : t)));
-    } else {
-      // Create new task
-      setTasks([...tasks, task]);
+  const handleSaveTask = async(task: Task) => {
+    try{
+      await addTask(task,context.token, context.user);
+      await getUserTasks();
+    }catch(error){
+      console.log('Error saving task:', error);
     }
   };
 
@@ -92,7 +74,7 @@ export default function Dashboard() {
           <div key={task.id} className="p-4 bg-white rounded-lg shadow-md">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
               <div className="flex-1">
-                <h2 className="text-xl font-bold">{task.title}</h2>
+                <h2 className="text-xl font-bold">{task.name}</h2>
                 <p className="text-gray-700">{task.description}</p>
                 <p className="text-gray-500">Due Date: {task.dueDate.split('T')[0]}</p>
                 <p className={`text-sm ${task.isCompleted === true ? 'text-green-500' : 'text-red-500'}`}>
